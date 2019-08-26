@@ -1,14 +1,28 @@
 package cashregister;
 
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class CashRegisterTest {
-
-
+	private  static MockPrinter mockedPrinter;
+	private  static CashRegister cashRegister;
+	
+	@BeforeAll
+	private static void setup() {
+		mockedPrinter = new MockPrinter();
+		cashRegister = new CashRegister(mockedPrinter);
+	}
+	
+	@BeforeEach
+	private void cleanPrinter() {
+		mockedPrinter.setTempText("");
+	}
+	
     @Test
     public void should_print_the_real_purchase_when_call_process() {
         //given
@@ -25,8 +39,12 @@ public class CashRegisterTest {
     @Test
     public void should_print_the_stub_purchase_when_call_process() {
         //given
+    	StubPurchase subPurchase = new StubPurchase();
+    	
         //when
+    	cashRegister.process(subPurchase);
         //then
+    	assertEquals("test product\t1.0\n", mockedPrinter.getTempText());
     }
 
     @Test
